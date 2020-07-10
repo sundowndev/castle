@@ -32,7 +32,11 @@ import (
 var App *castle.Application
 
 func init() {
-  App = castle.NewApplication("myapp")
+  App, err = castle.NewApplication("myapp")
+
+  if err != nil {
+    panic(err) // Validation error
+  }
 }
 ```
 
@@ -72,8 +76,9 @@ var Guest *castle.Profile
 
 func init() {  
   // Assign roles to profiles
-  Guest = myapp.App.NewProfile("guest", roles.UploadVideo)
-  Admin = myapp.App.NewProfile("admin", roles.DeleteAnyVideo).InheritFromProfile(Guest) // Admin profile will inherit from Guest's permissions
+  // Note returned error was ignored in this example
+  Guest, _ = myapp.App.NewProfile("guest", roles.UploadVideo)
+  Admin, _ = myapp.App.NewProfile("admin", roles.DeleteAnyVideo).InheritFromProfile(Guest) // Admin profile will inherit from Guest's permissions
 }
 ```
 
@@ -88,15 +93,15 @@ import (
 
 func main() {
   profile, err := myapp.App.GetProfile("admin")
-  
+
   if err != nil {
     panic(err) // This profile doesn't exists
   }
-  
+
   if true != profile.HasRole(roles.UploadVideo) {
     // Handle err
   }
-  
+
   // Admin profile has UploadVideo role/permission
 }
 ```
