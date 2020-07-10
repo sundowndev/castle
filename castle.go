@@ -77,10 +77,10 @@ func NewApplication(name string) (ApplicationInterface, error) {
 }
 
 // GetRole ...
-func GetRole(p string) (RoleInterface, error) {
+func GetRole(role string) (RoleInterface, error) {
 	var app *Application = nil
 
-	segment := strings.Split(p, ".")
+	segment := strings.Split(role, ".")
 
 	for name, application := range applications {
 		if name == segment[0] {

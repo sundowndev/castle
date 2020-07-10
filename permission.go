@@ -2,7 +2,7 @@ package castle
 
 import "github.com/google/uuid"
 
-type callback func (...interface{}) bool
+type callback func(...interface{}) bool
 
 // Permission ...
 type Permission struct {
