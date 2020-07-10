@@ -1,15 +1,19 @@
 # castle
 
-A role management library for Go
+A role management library for Go.
 
 ## Background
 
 ...
 
+## Current status
+
+v0, not stable...
+
 ## Definitions
 
-- Permission/role : ...
 - Application : ...
+- Role : ...
 - Profile : ...
 
 ## Installation
