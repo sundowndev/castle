@@ -94,9 +94,7 @@ var UploadVideo *castle.Role
 func init() {
   // Create some roles
   DeleteAnyVideo = myapp.App.NewRole()
-  UploadVideo = myapp.App.NewRole(func (user User, channel Channel) bool {
-  	return user.UUID == channel.CreatedBy
-  })
+  UploadVideo = myapp.App.NewRole()
 }
 ```
 
