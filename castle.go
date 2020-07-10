@@ -27,30 +27,30 @@ type Application struct {
 }
 
 // NewPermission ...
-func (c *Application) NewPermission() *Permission {
+func (a *Application) NewPermission() *Permission {
 	permissionUUID := uuid.New()
 	name := permissionUUID.String()
 
-	c.permissions[name] = &Permission{
+	a.permissions[name] = &Permission{
 		UUID: permissionUUID,
 	}
 
-	return c.permissions[name]
+	return a.permissions[name]
 }
 
 // NewRole ...
-func (c *Application) NewRole(name string, permissions ...*Permission) RoleInterface {
-	c.roles[name] = &Role{
-		Name:        fmt.Sprintf("%s.%s", c.name, name),
+func (a *Application) NewRole(name string, permissions ...*Permission) RoleInterface {
+	a.roles[name] = &Role{
+		Name:        fmt.Sprintf("%s.%s", a.name, name),
 		Permissions: permissions,
 	}
 
-	return c.roles[name]
+	return a.roles[name]
 }
 
 // GetRole ...
-func (c *Application) GetRole(name string) (RoleInterface, error) {
-	for key, value := range c.roles {
+func (a *Application) GetRole(name string) (RoleInterface, error) {
+	for key, value := range a.roles {
 		if key == name {
 			return value, nil
 		}
@@ -59,8 +59,8 @@ func (c *Application) GetRole(name string) (RoleInterface, error) {
 	return nil, fmt.Errorf("cannot retrieve role: %s", name)
 }
 
-func (c *Application) String() string {
-	return c.name
+func (a *Application) String() string {
+	return a.name
 }
 
 // NewApplication ...
