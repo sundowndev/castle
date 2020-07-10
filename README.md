@@ -25,13 +25,13 @@ A role management library for Go.
 
 ## Table of content
 
-- [Background](background)
-- [Current status](current-status)
-- [Definitions](definitions)
-- [Installation](installation)
-- [Usage](usage)
-- [Acknowledgement](acknowledgement)
-- [License](license)
+- [Background](#background)
+- [Current status](#current-status)
+- [Definitions](#definitions)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Acknowledgement](#acknowledgement)
+- [License](#license)
 
 ## Background
 
