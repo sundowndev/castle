@@ -78,6 +78,25 @@ func init() {
 }
 ```
 
+Define some permissions :
+
+```go
+package permissions
+
+import (
+  "myapp"
+  "github.com/sundowndev/castle"
+)
+
+var DeleteAnyVideo *castle.Permission
+var UploadVideo *castle.Permission
+
+func init() {
+  DeleteAnyVideo = myapp.App.NewPermission()
+  UploadVideo = myapp.App.NewPermission()
+}
+```
+
 Define some roles :
 
 ```go
@@ -85,42 +104,22 @@ package roles
 
 import (
   "myapp"
-  "github.com/sundowndev/castle"
-)
-
-var DeleteAnyVideo *castle.Role
-var UploadVideo *castle.Role
-
-func init() {
-  // Create some roles
-  DeleteAnyVideo = myapp.App.NewRole()
-  UploadVideo = myapp.App.NewRole()
-}
-```
-
-Define some profiles :
-
-```go
-package profiles
-
-import (
-  "myapp"
   "myapp/roles"
   "github.com/sundowndev/castle"
 )
 
-var Admin *castle.Profile
-var Guest *castle.Profile
+var Admin *castle.Role
+var Guest *castle.Role
 
 func init() {  
-  // Assign roles to profiles
+  // Assign permissions to roles
   // Note returned error was ignored in this example
-  Guest, _ = myapp.App.NewProfile("guest", roles.UploadVideo)
-  Admin, _ = myapp.App.NewProfile("admin", roles.DeleteAnyVideo).InheritFromProfile(Guest) // Admin profile will inherit from Guest's permissions
+  Guest, _ = myapp.App.NewRole("guest", roles.UploadVideo)
+  Admin, _ = myapp.App.NewRole("admin", roles.DeleteAnyVideo).InheritFrom(Guest) // Admin role will inherit from Guest's permissions
 }
 ```
 
-Check a profile's permissions :
+Check a role's permissions :
 
 ```go
 package main
@@ -132,23 +131,19 @@ import (
 )
 
 func main() {
-  profile, err := myapp.App.GetProfile("myapp.admin")
+  role, err := myapp.App.GetRole("myapp.admin")
 
   if err != nil {
-    panic(err) // This profile doesn't exists
+    panic(err) // This role doesn't exists
   }
 
-  if true != profile.HasRole(roles.UploadVideo) {
+  if true != role.HasPermission(roles.UploadVideo) {
     // Handle err
   }
 
-  // Admin profile has UploadVideo role/permission
+  // Admin role has UploadVideo role/permission
 }
 ```
-
-### Database integrity
-
-...
 
 ## Acknowledgement
 
