@@ -4,7 +4,7 @@ type RoleInterface interface {
 	HasPermission(*Permission) bool
 	String() string
 	InheritFrom(RoleInterface) RoleInterface
-	GetRoles() []*Permission
+	GetPermissions() []*Permission
 }
 
 // Role ...
@@ -13,7 +13,7 @@ type Role struct {
 	Permissions []*Permission
 }
 
-func (r *Role) GetRoles() []*Permission {
+func (r *Role) GetPermissions() []*Permission {
 	return r.Permissions
 }
 
@@ -32,7 +32,7 @@ func (r *Role) HasPermission(role *Permission) bool {
 }
 
 func (r *Role) InheritFrom(role RoleInterface) RoleInterface {
-	r.Permissions = append(r.Permissions, role.GetRoles()...)
+	r.Permissions = append(r.Permissions, role.GetPermissions()...)
 
 	return r
 }
