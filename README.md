@@ -147,8 +147,9 @@ func main() {
 
 ## Acknowledgement
 
-- [node-roles (Node)](https://dresende.github.io/node-roles/)
-- [kan (Ruby)](https://github.com/davydovanton/kan)
+- [node-roles](https://dresende.github.io/node-roles/) (Node)
+- [kan](https://github.com/davydovanton/kan) (Ruby)
+- [rolify](https://github.com/RolifyCommunity/rolify) (Ruby)
 
 ## License
 
