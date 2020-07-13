@@ -56,7 +56,7 @@ $ go get github.com/sundowndev/castle
 
 ## Usage
 
-Define your application :
+Define your application. The name must match `([a-zA-Z])\w+`.
 
 ```go
 package main
@@ -65,12 +65,10 @@ import (
   "github.com/sundowndev/castle"
 )
 
-const MyAppName = "myapp"
-
 var App *castle.Application
 
 func init() {
-  App, err = castle.NewApplication(MyAppName)
+  App, err = castle.NewApplication("myapp")
 
   if err != nil {
     panic(err) // Validation error
