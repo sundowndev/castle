@@ -1,5 +1,3 @@
-# castle
-
 <div align="left">
   <a href="https://godoc.org/github.com/sundowndev/castle">
     <img src="https://godoc.org/github.com/sundowndev/castle?status.svg" alt="GoDoc">
@@ -21,42 +19,46 @@
   </a>
 </div>
 
-A role management library for Go.
+# castle
+
+A role management library for Go. Supports both static and dynamic role assignment, so your design shouldn't be impacted. Written for large scale systems with several permissions and roles in different contexts (e.g: Gitlab, GitHub, ...), but also simplier systems (e.g: Nextcloud, ...).
 
 ## Table of content
 
-- [Background](#background)
+- [Design principles](#design-principles)
 - [Current status](#current-status)
-- [Definitions](#definitions)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Acknowledgement](#acknowledgement)
 - [License](#license)
 
-## Background
+## Design principles
 
-...
+**Definitions :**
+
+- **Applications** : An application is a set of roles. You can create multiple applications with different roles.
+- **Permissions** : A permission, but is nothing without a role assigned to it. Permissions can be shared between applications.
+- **Roles** : A role is a set of permissions.
+<!--
+- **Abilities** : ...
+
+**Principles** :
+
+- A profile can have only one role per context, but can have many roles from many contexts -->
 
 ## Current status
 
 The current version is v0, the API is instable but still usable. The current design needs more feedback and use case examples to release a v1.
 
-## Definitions
-
-- **Applications** : An application is a set of roles. You can create multiple applications with different roles.
-- **Permissions** : A permission, but is nothing without a role assigned to it. Permissions can be shared between applications.
-<!-- - **Abilities** : ... -->
-- **Roles** : A role is a set of permissions.
-
 ## Installation
 
-```
-$ go get github.com/sundowndev/castle
+```shell
+go get github.com/sundowndev/castle
 ```
 
 ## Usage
 
-Define your application :
+First, define your application :
 
 ```go
 package main
@@ -65,12 +67,10 @@ import (
   "github.com/sundowndev/castle"
 )
 
-const MyAppName = "myapp"
-
 var App *castle.Application
 
 func init() {
-  App, err = castle.NewApplication(MyAppName)
+  App, err = castle.NewApplication("myapp")
 
   if err != nil {
     panic(err) // Validation error
@@ -150,6 +150,7 @@ func main() {
 - [node-roles](https://dresende.github.io/node-roles/) (Node)
 - [kan](https://github.com/davydovanton/kan) (Ruby)
 - [rolify](https://github.com/RolifyCommunity/rolify) (Ruby)
+- [Laravel Auth](https://github.com/jeremykenedy/laravel-auth) (PHP)
 
 ## License
 
