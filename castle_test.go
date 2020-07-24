@@ -1,6 +1,9 @@
-package castle
+package castle_test
 
 import (
+	"github.com/sundowndev/castle"
+	"github.com/sundowndev/castle/store"
+	"regexp"
 	"testing"
 
 	assertion "github.com/stretchr/testify/assert"
@@ -9,129 +12,19 @@ import (
 func TestInit(t *testing.T) {
 	assert := assertion.New(t)
 
-	t.Run("should return valid application name", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
+	t.Run("should create a valid token", func(t *testing.T) {
+		app := castle.NewApp(&store.LocalStore{
+			Store: make(map[string]string),
+		})
 
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
+		ns := app.NewNamespace("repositories")
 
-		assert.Equal("myapp", app.String(), "they should be equal")
-	})
+		read := ns.NewScope("read_repository")
 
-	t.Run("should create a role with a valid name", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
+		token, err := app.NewToken("myrepo", 3600, read)
+		assert.Nil(err)
 
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		permission1 := app.NewPermission()
-
-		app.NewRole("role", permission1)
-
-		role, err := GetRole("myapp.role")
-		if err != nil {
-			panic(err)
-		}
-
-		assert.Equal("myapp.role", role.String(), "they should be equal")
-	})
-
-	t.Run("should have only 1 permission", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		permission1 := app.NewPermission()
-		permission2 := app.NewPermission()
-
-		app.NewRole("role", permission1)
-
-		role, err := GetRole("myapp.role")
-		if err != nil {
-			panic(err)
-		}
-
-		assert.Equal(true, role.HasPermission(permission1), "they should be equal")
-		assert.Equal(false, role.HasPermission(permission2), "they should be equal")
-	})
-
-	t.Run("should get role from container", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		app.NewRole("role")
-
-		role, err := app.GetRole("role")
-		if err != nil {
-			panic(err)
-		}
-
-		assert.Equal("myapp.role", role.String(), "they should be equal")
-	})
-
-	t.Run("should fail to retrieve application", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		_, err := GetRole("myapp.test")
-
-		assert.Equal("cannot retrieve application: myapp", err.Error(), "they should be equal")
-	})
-
-	t.Run("should fail to retrieve role globally", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		_, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = GetRole("myapp.test")
-
-		assert.Equal("cannot retrieve role: test", err.Error(), "they should be equal")
-	})
-
-	t.Run("should fail to retrieve role from container", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = app.GetRole("test")
-
-		assert.Equal("cannot retrieve role: test", err.Error(), "they should be equal")
-	})
-
-	t.Run("should inherit from another role", func(t *testing.T) {
-		applications = make(map[string]*Application) // Reset applications
-
-		app, err := NewApplication("myapp")
-		if err != nil {
-			panic(err)
-		}
-
-		permission1 := app.NewPermission()
-		permission2 := app.NewPermission()
-
-		role1 := app.NewRole("role", permission1)
-		role2 := app.NewRole("role", permission2)
-
-		assert.Equal(false, role2.HasPermission(permission1), "they should be equal")
-
-		role2.InheritFrom(role1)
-
-		assert.Equal(true, role2.HasPermission(permission1), "they should be equal")
+		assert.Equal( "myrepo",token.Name, "they should be equal")
+		assert.Regexp( regexp.MustCompile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}"), token.String(),"they should be equal")
 	})
 }
