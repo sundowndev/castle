@@ -21,7 +21,7 @@
 
 # castle
 
-A role management library for Go. Supports both static and dynamic role assignment, so your design shouldn't be impacted. Written for large scale systems with several permissions and roles in different contexts (e.g: Gitlab, GitHub, ...), but also simplier systems (e.g: Nextcloud, ...).
+Access token management backed by Redis. Designed for APIs and micro services. Written for large scale systems with several permissions and roles in different contexts (e.g: Gitlab, GitHub...), but also simplier systems (e.g: Nextcloud, HaveIBeenPwned...).
 
 ## Table of content
 
@@ -36,15 +36,17 @@ A role management library for Go. Supports both static and dynamic role assignme
 
 **Definitions :**
 
-- **Applications** : An application is a set of roles. You can create multiple applications with different roles.
-- **Permissions** : A permission, but is nothing without a role assigned to it. Permissions can be shared between applications.
-- **Roles** : A role is a set of permissions.
-<!--
-- **Abilities** : ...
+- **Applications** : ...
+- **Namespace** : ...
+- **Scope** : ...
 
 **Principles** :
 
-- A profile can have only one role per context, but can have many roles from many contexts -->
+- Token value is RFC-4112 compliant
+- Token has a name, a single namespace and several scopes
+- Tokens **cannot be persistant, edited or altered**
+- Tokens cannot be gathered in mass through the API
+- Once created, if the token is lost, **it cannot be found anymore**
 
 ## Current status
 
@@ -70,78 +72,28 @@ import (
 var App *castle.Application
 
 func init() {
-  App, err = castle.NewApplication("myapp")
-
-  if err != nil {
-    panic(err) // Validation error
-  }
+  App := castle.NewApp(&castle.RedisStore{
+    Host: "localhost",
+    Port: 6739,
+    Password: "",
+    DB: "0",
+  })
 }
 ```
 
-Define some permissions :
-
-```go
-package permissions
-
-import (
-  "myapp"
-  "github.com/sundowndev/castle"
-)
-
-var DeleteAnyVideo *castle.Permission
-var UploadVideo *castle.Permission
-
-func init() {
-  DeleteAnyVideo = myapp.App.NewPermission()
-  UploadVideo = myapp.App.NewPermission()
-}
-```
-
-Define some roles :
-
-```go
-package roles
-
-import (
-  "myapp"
-  "myapp/roles"
-  "github.com/sundowndev/castle"
-)
-
-var Admin *castle.Role
-var Guest *castle.Role
-
-func init() {  
-  // Assign permissions to roles
-  // Note returned error was ignored in this example
-  Guest, _ = myapp.App.NewRole("guest", roles.UploadVideo)
-  Admin, _ = myapp.App.NewRole("admin", roles.DeleteAnyVideo).InheritFrom(Guest) // Admin role will inherit from Guest's permissions
-}
-```
-
-Check a role's permissions :
+then define some namespaces
 
 ```go
 package main
 
 import (
-  "myapp"
-  "myapp/roles"
   "github.com/sundowndev/castle"
 )
 
-func main() {
-  role, err := myapp.App.GetRole("myapp.admin")
+var Repositories *castle.Namespace
 
-  if err != nil {
-    panic(err) // This role doesn't exists
-  }
-
-  if true != role.HasPermission(roles.UploadVideo) {
-    // Handle err
-  }
-
-  // Admin role has UploadVideo role/permission
+func init() {
+  Repositories := App.NewNamespace("repositories")
 }
 ```
 
