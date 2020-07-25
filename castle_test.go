@@ -5,6 +5,7 @@ import (
 	"github.com/sundowndev/castle/store"
 	"regexp"
 	"testing"
+	"time"
 
 	assertion "github.com/stretchr/testify/assert"
 )
@@ -21,7 +22,7 @@ func TestInit(t *testing.T) {
 
 		read := ns.NewScope("read_repository")
 
-		token, err := app.NewToken("myrepo", 3600, read)
+		token, err := app.NewToken("myrepo", time.Now().Add(1 *time.Minute), read)
 		assert.Nil(err)
 
 		assert.Equal( "myrepo",token.Name, "they should be equal")

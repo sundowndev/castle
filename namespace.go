@@ -1,12 +1,13 @@
 package castle
 
+// TODO: doc
 // Namespace ...
 type Namespace struct {
 	name string
 	app  *Application
 }
 
-// Score ...
+// Scope defines a resource associated to a namespace and granted to tokens
 type Scope struct {
 	namespace *Namespace
 	name      string
