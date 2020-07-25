@@ -27,5 +27,5 @@ func (t *Token) Serialize() (string, error) {
 }
 
 func (t *Token) HasScope(scope *Scope) bool {
-	
+	return false
 }
