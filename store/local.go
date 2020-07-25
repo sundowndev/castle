@@ -6,7 +6,7 @@ import (
 )
 
 type Store interface {
-	GetKey(string) (string,error)
+	GetKey(string) (string, error)
 	SetKey(string, string, time.Time) error
 	RemoveKey(string) (bool, error)
 }
@@ -25,25 +25,44 @@ func (s *LocalStore) GetKey(key string) (string, error) {
 
 func (s *LocalStore) SetKey(key string, value string, expiration time.Time) error {
 	// Ensure key doesn't exists yet
-	if _, ok := s.Store[key]; !ok {
-		s.Store[key] = value
-
-		return nil
+	if _, ok := s.Store[key]; ok {
+		return fmt.Errorf("key already exist: %s", key)
 	}
 
-	// go s.removeExpiredKey(key, expiration)
+	s.Store[key] = value
 
-	return fmt.Errorf("key already exist: %s. Remove it first", key)
+	go s.removeWhenExpired(key, expiration)
+
+	return nil
+
 }
 
 func (s *LocalStore) RemoveKey(key string) (bool, error) {
 	var removed bool
 
-	if _, ok := s.Store[key]; !ok {
+	if _, ok := s.Store[key]; ok {
 		removed = true
 	}
 
 	delete(s.Store, key)
 
 	return removed, nil
+}
+
+func (s *LocalStore) removeWhenExpired(key string, expiration time.Time) error {
+	tick := time.Tick(1 * time.Second)
+
+	for {
+		select {
+		case <-tick:
+			if expiration.Before(time.Now()) {
+				_, err := s.RemoveKey(key)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			}
+		}
+	}
 }
