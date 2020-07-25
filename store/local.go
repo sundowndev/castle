@@ -1,10 +1,13 @@
 package store
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Store interface {
 	GetKey(string) (string,error)
-	SetKey(string, string, int) error
+	SetKey(string, string, time.Time) error
 	RemoveKey(string) (bool, error)
 }
 
@@ -20,13 +23,15 @@ func (s *LocalStore) GetKey(key string) (string, error) {
 	return "", fmt.Errorf("key not found: %s", key)
 }
 
-func (s *LocalStore) SetKey(key string, value string, expiration int) error {
+func (s *LocalStore) SetKey(key string, value string, expiration time.Time) error {
 	// Ensure key doesn't exists yet
 	if _, ok := s.Store[key]; !ok {
 		s.Store[key] = value
 
 		return nil
 	}
+
+	// go s.removeExpiredKey(key, expiration)
 
 	return fmt.Errorf("key already exist: %s. Remove it first", key)
 }

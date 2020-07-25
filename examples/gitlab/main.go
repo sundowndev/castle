@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/sundowndev/castle"
+	"time"
 )
 
 var App *castle.Application
@@ -20,9 +21,13 @@ func init() {
 }
 
 func main() {
-	token, _ := App.NewToken("myrepo", 3600, Read)
+	token, _ := App.NewToken("myrepo", time.Now().Add(2 * time.Second), Read)
 
 	json, _ := token.Serialize()
 
 	fmt.Println(token.String(), json)
+
+	token2, _ := App.GetToken(token.String())
+
+	fmt.Println(token2.String(), token2.Name)
 }

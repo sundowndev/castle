@@ -3,6 +3,7 @@ package castle
 import (
 	"github.com/google/uuid"
 	"github.com/sundowndev/castle/store"
+	"time"
 )
 
 type LocalStore = store.LocalStore
@@ -33,9 +34,9 @@ func (a *Application) NewNamespace(name string) *Namespace {
 	return a.namespaces[name]
 }
 
-// NewToken creates a new UUID token inside
-func (a *Application) NewToken(name string, expiration int, scopes ...*Scope) (*Token, error) {
-	var scopesAsString = []string{}
+// NewToken creates a new UUID token
+func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Scope) (*Token, error) {
+	var scopesAsString []string
 
 	for _, v := range scopes {
 		scopesAsString = append(scopesAsString, v.String())
@@ -61,8 +62,24 @@ func (a *Application) NewToken(name string, expiration int, scopes ...*Scope) (*
 	return t, nil
 }
 
-// TODO: implement
-// RevokeToken
+// GetToken retrieve a token from its value
+func (a *Application) GetToken(token string) (*Token, error) {
+	json, err := a.store.GetKey(token)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := deserialize(token, []byte(json))
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+// RevokeToken permanently delete a token
 func (a *Application) RevokeToken(token string) error {
-	return nil
+	_, err := a.store.RemoveKey(token)
+
+	return err
 }
