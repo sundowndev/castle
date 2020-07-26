@@ -21,7 +21,7 @@
 
 # castle
 
-Access token management backed by Redis. Designed for APIs and micro services. Written for large scale systems with several permissions in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
+Access token management backed by Redis. Designed for large scale systems with several permissions in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
 
 ## Table of content
 
@@ -55,7 +55,7 @@ Access token management backed by Redis. Designed for APIs and micro services. W
 
 ## Current status
 
-The current version is v0, the API is unstable but still usable. The current design needs more feedback and use case examples to release a v1.
+**Under active development**. The current version is v0, the API is unstable but still usable. The current design needs more feedback and use case examples to release a v1.
 
 ## Installation
 
@@ -123,6 +123,8 @@ func init() {
 ...
 
 ### Using rate limit
+
+Rate limit feature is optional. By default, rate limit is set to `-1`, which basically means the token has no rate limit. You're free to handle this feature your own way. Decreasing or increasing the rate limit as you want. You may also use a worker service to periodically reset the rate limit of tokens.
 
 ```go
 package controllers
