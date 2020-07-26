@@ -22,10 +22,10 @@ func TestInit(t *testing.T) {
 
 		read := ns.NewScope("read_repository")
 
-		token, err := app.NewToken("myrepo", time.Now().Add(1 *time.Minute), read)
+		token, err := app.NewToken("myrepo", time.Now().Add(1*time.Minute), read)
 		assert.Nil(err)
 
-		assert.Equal( "myrepo",token.Name, "they should be equal")
-		assert.Regexp( regexp.MustCompile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}"), token.String(),"they should be equal")
+		assert.Equal("myrepo", token.Name, "they should be equal")
+		assert.Regexp(regexp.MustCompile("([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}){1}"), token.String(), "they should be equal")
 	})
 }
