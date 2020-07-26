@@ -7,12 +7,12 @@ import (
 )
 
 type Token struct {
-	uuid      uuid.UUID `json:"-"`
-	Name      string    `json:"name"`
-	Namespace *Namespace    `json:"namespace"`
-	Scopes    []string  `json:"scopes"`
-	RateLimit int       `json:"rate_limit" default:"-1"`
-	expiresAt time.Time `json:"expires_at"`
+	uuid      uuid.UUID  `json:"-"`
+	Name      string     `json:"name"`
+	Namespace *Namespace `json:"namespace"`
+	Scopes    []string   `json:"scopes"`
+	RateLimit int        `json:"rate_limit" default:"-1"`
+	expiresAt time.Time  `json:"expires_at"`
 }
 
 func (t *Token) String() string {
