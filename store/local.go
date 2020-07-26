@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-type Store interface {
-	GetKey(string) (string, error)
-	SetKey(string, string, time.Time) error
-	RemoveKey(string) (bool, error)
-}
-
 type LocalStore struct {
 	Store *sync.Map
 }

@@ -3,19 +3,11 @@ package castle
 import (
 	"github.com/google/uuid"
 	"github.com/sundowndev/castle/store"
-	"sync"
 	"time"
 )
 
 // Local store is an in-memory KV store for testing
 type LocalStore = store.LocalStore
-
-// NewLocalStore creates a new local store to be used in an application
-func NewLocalStore() *LocalStore {
-	return &LocalStore{
-		Store: &sync.Map{},
-	}
-}
 
 // Application defines an entry point for your web application
 type Application struct {
