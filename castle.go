@@ -46,7 +46,7 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 	t := &Token{
 		uuid:      uuid.New(),
 		Name:      name,
-		Namespace: scopes[0].namespace.name,
+		Namespace: scopes[0].namespace,
 		Scopes:    scopesAsString,
 	}
 

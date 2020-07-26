@@ -9,10 +9,10 @@ import (
 type Token struct {
 	uuid      uuid.UUID `json:"-"`
 	Name      string    `json:"name"`
-	Namespace string    `json:"namespace"`
+	Namespace *Namespace    `json:"namespace"`
 	Scopes    []string  `json:"scopes"`
 	RateLimit int       `json:"rate_limit" default:"-1"`
-	expiresAt time.Time `json:"-"`
+	expiresAt time.Time `json:"expires_at"`
 }
 
 func (t *Token) String() string {
