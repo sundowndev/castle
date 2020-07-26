@@ -100,6 +100,22 @@ func init() {
 }
 ```
 
+#### Creating your own store
+
+You can create your own store by using the following `Store` interface :
+
+```go
+type Store interface {
+	GetKey(string) (string, error)
+	SetKey(string, string, time.Time) error
+	RemoveKey(string) (bool, error)
+}
+```
+
+The store must follow the following design principles :
+
+- A key cannot be updated, it must be removed first
+
 ### Namespaces
 
 Define some namespaces.
@@ -120,7 +136,27 @@ func init() {
 
 ### Scopes
 
-...
+Define some scopes inside namespace.
+
+```go
+package main
+
+import (
+  "github.com/sundowndev/castle"
+)
+
+var Repositories *castle.Namespace
+
+var Read *castle.Scope
+var Write *castle.Scope
+
+func init() {
+  Repositories = App.NewNamespace("repositories")
+  
+  Read = Repositories.NewScope("read")
+  Write = Repositories.NewScope("write")
+}
+```
 
 ### Using rate limit
 
@@ -132,7 +168,8 @@ package controllers
 func CreateTokenHandler(w http.ResponseWriter, r *http.Request) {
     token, err := app.NewToken("token_name", time.Now().Add(1 * time.Minute), read)
     err != nil {
-        // Handle err...        
+        // Handle err...
+        return
     }
 
     token.SetRateLimit(500)
@@ -148,6 +185,7 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
 
     if token.RateLimit == 0 {
         w.WriteHeader(403)
+        return
     }
 
     token.RateLimit(func (rate int) int {
