@@ -51,6 +51,7 @@ func (s *LocalStore) RemoveKey(key string) (bool, error) {
 
 func (s *LocalStore) removeWhenExpired(key string, expiration time.Time) error {
 	tick := time.Tick(1 * time.Second)
+	defer tick.Stop()
 
 	for {
 		select {
@@ -60,7 +61,6 @@ func (s *LocalStore) removeWhenExpired(key string, expiration time.Time) error {
 				if err != nil {
 					return err
 				}
-
 				return nil
 			}
 		}
