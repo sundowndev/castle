@@ -1,3 +1,5 @@
+# castle
+
 <div align="left">
   <a href="https://godoc.org/github.com/sundowndev/castle">
     <img src="https://godoc.org/github.com/sundowndev/castle?status.svg" alt="GoDoc">
@@ -18,8 +20,6 @@
     <img src="https://img.shields.io/github/release/SundownDEV/castle.svg" alt="Latest version" />
   </a>
 </div>
-
-# castle
 
 Access token management backed by Redis. Designed for large scale systems with several permissions in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
 
@@ -175,7 +175,9 @@ func CreateTokenHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    token.SetRateLimit(500)
+    token.SetRateLimit(func (rate int) int {
+        return 500
+    })
 
     // return token to client...   
 }
@@ -186,12 +188,12 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
         // Handle err...        
     }
 
-    if token.RateLimit == 0 {
+    if token.GetRateLimit() == 0 {
         w.WriteHeader(403)
         return
     }
 
-    token.RateLimit(func (rate int) int {
+    token.SetRateLimit(func (rate int) int {
         return rate - 1
     })
 
