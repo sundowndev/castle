@@ -21,7 +21,7 @@
 
 # castle
 
-Access token management backed by Redis. Designed for APIs and micro services. Written for large scale systems with several permissions and scopes in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
+Access token management backed by Redis. Designed for APIs and micro services. Written for large scale systems with several permissions in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
 
 ## Table of content
 
@@ -42,7 +42,7 @@ Access token management backed by Redis. Designed for APIs and micro services. W
 
 - **Application** : An entry point for your web service to register your store, namespaces and scopes.
 - **Namespace** : Refers to a resource of your application.
-- **Scope** : A permission of your web service which can be granted to tokens inside a namespace.
+- **Scope** : A permission of a namespace that can be granted to tokens.
 - **Store**: A key/value storage system to store serialized tokens.
 
 **Principles** :
@@ -128,7 +128,7 @@ func init() {
 package controllers
 
 func CreateTokenHandler(w http.ResponseWriter, r *http.Request) {
-    token, err := app.NewToken("token_name", time.Now().Add(1 *time.Minute), read)
+    token, err := app.NewToken("token_name", time.Now().Add(1 * time.Minute), read)
     err != nil {
         // Handle err...        
     }
