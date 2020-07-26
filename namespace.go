@@ -1,7 +1,6 @@
 package castle
 
-// TODO: doc
-// Namespace ...
+// Namespace refers to a resource of an application.
 type Namespace struct {
 	name string
 	app  *Application
@@ -13,10 +12,13 @@ type Scope struct {
 	name      string
 }
 
+// String returns a string representation of the scope
 func (s *Scope) String() string {
 	return s.name
 }
 
+// NewScope creates a new scope using the given name
+// This function overrides any duplicated usage
 func (n *Namespace) NewScope(name string) *Scope {
 	n.app.scopes[name] = &Scope{
 		namespace: n,

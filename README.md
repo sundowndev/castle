@@ -92,11 +92,12 @@ If you want to store tokens in-memory for testing, there's also a local store. L
 package main
 
 import (
+  "sync"
   "github.com/sundowndev/castle"
 )
 
 func init() {
-  _ = castle.NewApp(&castle.LocalStore{Store: map[string]string{}})
+  _ = castle.NewApp(castle.NewLocalStore())
 }
 ```
 

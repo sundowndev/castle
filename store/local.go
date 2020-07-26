@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -12,12 +13,12 @@ type Store interface {
 }
 
 type LocalStore struct {
-	Store map[string]string
+	Store *sync.Map
 }
 
 func (s *LocalStore) GetKey(key string) (string, error) {
-	if v, ok := s.Store[key]; ok {
-		return v, nil
+	if v, ok := s.Store.Load(key); ok {
+		return v.(string), nil
 	}
 
 	return "", fmt.Errorf("key not found: %s", key)
@@ -25,11 +26,11 @@ func (s *LocalStore) GetKey(key string) (string, error) {
 
 func (s *LocalStore) SetKey(key string, value string, expiration time.Time) error {
 	// Ensure key doesn't exists yet
-	if _, ok := s.Store[key]; ok {
+	if _, ok := s.Store.Load(key); ok {
 		return fmt.Errorf("key already exist: %s", key)
 	}
 
-	s.Store[key] = value
+	s.Store.Store(key, value)
 
 	go s.removeWhenExpired(key, expiration)
 
@@ -40,22 +41,22 @@ func (s *LocalStore) SetKey(key string, value string, expiration time.Time) erro
 func (s *LocalStore) RemoveKey(key string) (bool, error) {
 	var removed bool
 
-	if _, ok := s.Store[key]; ok {
+	if _, ok := s.Store.Load(key); ok {
 		removed = true
 	}
 
-	delete(s.Store, key)
+	s.Store.Delete(key)
 
 	return removed, nil
 }
 
 func (s *LocalStore) removeWhenExpired(key string, expiration time.Time) error {
-	tick := time.Tick(1 * time.Second)
-	defer tick.Stop()
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
 	for {
 		select {
-		case <-tick:
+		case <-ticker.C:
 			if expiration.Before(time.Now()) {
 				_, err := s.RemoveKey(key)
 				if err != nil {

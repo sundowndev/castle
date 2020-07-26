@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/sundowndev/castle"
 	"testing"
 	"time"
 
@@ -11,9 +12,7 @@ func TestInit(t *testing.T) {
 	assert := assertion.New(t)
 
 	t.Run("should set a key", func(t *testing.T) {
-		store := &LocalStore{
-			Store: map[string]string{},
-		}
+		store := castle.NewLocalStore()
 
 		err := store.SetKey("hello", "word", time.Now().Add(1*time.Minute))
 		assert.Nil(nil, err)
@@ -25,9 +24,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("should set a key that already exists", func(t *testing.T) {
-		store := &LocalStore{
-			Store: map[string]string{},
-		}
+		store := castle.NewLocalStore()
 
 		_ = store.SetKey("hello", "word", time.Now().Add(1*time.Minute))
 
@@ -37,9 +34,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("should set then remove a key", func(t *testing.T) {
-		store := &LocalStore{
-			Store: map[string]string{},
-		}
+		store := castle.NewLocalStore()
 
 		err := store.SetKey("hello", "word", time.Now().Add(1*time.Minute))
 		assert.Nil(nil, err)
@@ -51,9 +46,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("should remove non-existent key", func(t *testing.T) {
-		store := &LocalStore{
-			Store: map[string]string{},
-		}
+		store := castle.NewLocalStore()
 
 		removed, err := store.RemoveKey("hello")
 		assert.Nil(nil, err)
@@ -62,9 +55,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("should get an expired key", func(t *testing.T) {
-		store := &LocalStore{
-			Store: map[string]string{},
-		}
+		store := castle.NewLocalStore()
 
 		err := store.SetKey("hello", "word", time.Now())
 		assert.Nil(nil, err)

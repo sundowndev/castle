@@ -4,6 +4,7 @@ import (
 	"github.com/sundowndev/castle"
 	"github.com/sundowndev/castle/store"
 	"regexp"
+	"sync"
 	"testing"
 	"time"
 
@@ -15,7 +16,7 @@ func TestInit(t *testing.T) {
 
 	t.Run("should create a valid token", func(t *testing.T) {
 		app := castle.NewApp(&store.LocalStore{
-			Store: make(map[string]string),
+			Store: &sync.Map{},
 		})
 
 		ns := app.NewNamespace("repositories")
