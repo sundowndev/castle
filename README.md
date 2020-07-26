@@ -205,6 +205,7 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
 - [kan](https://github.com/davydovanton/kan) (Ruby)
 - [rolify](https://github.com/RolifyCommunity/rolify) (Ruby)
 - [Laravel Auth](https://github.com/jeremykenedy/laravel-auth) (PHP)
+- [Gitlab's access token feature](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
 
 ## License
 
