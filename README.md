@@ -113,9 +113,11 @@ type Store interface {
 }
 ```
 
-The store must follow the following design principles :
+Ideally, a store would follow the following design principles :
 
 - A key cannot be updated, it must be removed first
+- Store must have a lock system to avoid conflict in go routines
+- Store never panics, it always returns errors cleanly
 
 ### Namespaces
 
@@ -161,7 +163,7 @@ func init() {
 
 ### Using rate limit
 
-Rate limit feature is optional. By default, rate limit is set to `-1`, which basically means the token has no rate limit. You're free to handle this feature your own way. Decreasing or increasing the rate limit as you want. You may also use a worker service to periodically reset the rate limit of tokens.
+Rate limit feature is optional. By default, rate limit is set to `-1`, which basically means the token has no rate limit. You're free to handle this feature your own way, decreasing or increasing the rate limit as you want. You may also use a worker service to periodically reset the rate limit of tokens.
 
 ```go
 package controllers
