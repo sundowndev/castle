@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/sundowndev/castle"
+	"net/http"
 	"time"
 )
 
@@ -11,23 +11,45 @@ var App *castle.Application
 var Repositories *castle.Namespace
 
 var Read *castle.Scope
+var Write *castle.Scope
 
+// Init application, namespaces and scopes
 func init() {
 	App = castle.NewApp(&castle.LocalStore{Store: make(map[string]string)})
 
 	Repositories = App.NewNamespace("repositories")
 
 	Read = Repositories.NewScope("read_repository")
+	Write = Repositories.NewScope("write_repository")
 }
 
 func main() {
-	token, _ := App.NewToken("myrepo", time.Now().Add(2 * time.Second), Read)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		token, err := App.NewToken("myrepo", time.Now().Add(2*time.Second), Write, Read)
+		if err != nil {
+			w.Write([]byte("error"))
+			w.WriteHeader(500)
+			return
+		}
 
-	json, _ := token.Serialize()
+		w.Write([]byte(token.String()))
+	})
 
-	fmt.Println(token.String(), json)
+	http.HandleFunc("/read", func(w http.ResponseWriter, r *http.Request) {
+		token, err := App.GetToken(r.Header.Get("Authorization"))
+		if err != nil {
+			w.Write([]byte("error"))
+			w.WriteHeader(500)
+			return
+		}
 
-	token2, _ := App.GetToken(token.String())
+		if !token.HasScope(Read) || token.RateLimit == 0 {
+			w.WriteHeader(403)
+			return
+		}
 
-	fmt.Println(token2.String(), token2.Name)
+		w.Write([]byte("ok"))
+	})
+
+	http.ListenAndServe(":80", nil)
 }
