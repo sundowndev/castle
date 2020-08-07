@@ -11,9 +11,9 @@ func TestToken(t *testing.T) {
 
 	t.Run("should serialize token properly", func(t *testing.T) {
 		token := &Token{
-			uuid:   uuid.New(),
-			Name:   "mytoken",
-			Scopes: []string{"read_repository"},
+			uuid:      uuid.New(),
+			Name:      "mytoken",
+			Scopes:    []string{"read_repository"},
 			RateLimit: -1,
 		}
 

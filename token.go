@@ -16,7 +16,6 @@ type Token struct {
 	expiresAt time.Time
 }
 
-
 // String returns the token's value as a string.
 // That value is always a valid UUID.
 func (t *Token) String() string {
