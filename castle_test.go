@@ -43,6 +43,7 @@ func TestApp(t *testing.T) {
 		assert.Nil(err)
 
 		assert.Equal(token.Name, token2.Name)
+		assert.Equal(read.String(), token.Scopes[0])
 	})
 
 	t.Run("should revoke a token", func(t *testing.T) {

@@ -16,8 +16,8 @@ type Application struct {
 	scopes     map[string]*Scope
 }
 
-const UNLIMITED_RATE_LIMT Rate = -1
-const RATE_LIMIT_KEY_SUFFIX string = ":rate"
+//const UNLIMITED_RATE_LIMT Rate = -1
+//const RATE_LIMIT_KEY_SUFFIX string = ":rate"
 
 // NewApp creates an application object with a key/value storage, scopes and namespaces
 func NewApp(s store.Store) *Application {

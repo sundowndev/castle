@@ -1,5 +1,7 @@
 package castle
 
+import "fmt"
+
 // Namespace refers to a resource of an application.
 type Namespace struct {
 	name string
@@ -8,10 +10,23 @@ type Namespace struct {
 
 // NewNamespace creates a namespace
 func (ns *Namespace) NewNamespace(name string) *Namespace {
+	fullName := fmt.Sprintf("%s.%s", ns.name, name)
+
 	ns.app.namespaces[name] = &Namespace{
-		name: name,
+		name: fullName,
 		app:  ns.app,
 	}
 
-	return ns.app.namespaces[name]
+	return ns.app.namespaces[fullName]
+}
+
+// NewScope creates a new scope using the given name
+// This function overrides any duplicated usage
+func (ns *Namespace) NewScope(name string) *Scope {
+	ns.app.scopes[name] = &Scope{
+		namespace: ns,
+		name:      name,
+	}
+
+	return ns.app.scopes[name]
 }
