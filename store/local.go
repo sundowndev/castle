@@ -23,6 +23,9 @@ func (s *LocalStore) GetKey(key string) (string, error) {
 }
 
 func (s *LocalStore) SetKey(key string, value string, expiration time.Time) error {
+	s.m.Lock()
+	defer s.m.Unlock()
+
 	// Ensure key doesn't exists yet
 	if _, ok := s.store[key]; ok {
 		return fmt.Errorf("key already exist: %s", key)
@@ -39,6 +42,9 @@ func (s *LocalStore) SetKey(key string, value string, expiration time.Time) erro
 }
 
 func (s *LocalStore) RemoveKey(key string) (bool, error) {
+	s.m.Lock()
+	defer s.m.Unlock()
+
 	var removed bool
 
 	if _, ok := s.store[key]; ok {
@@ -48,4 +54,15 @@ func (s *LocalStore) RemoveKey(key string) (bool, error) {
 	delete(s.store, key)
 
 	return removed, nil
+}
+
+func (s *LocalStore) Flush() error {
+	s.m.Lock()
+	defer s.m.Unlock()
+
+	for k := range s.store {
+		delete(s.store, k)
+	}
+
+	return nil
 }

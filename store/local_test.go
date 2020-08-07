@@ -54,7 +54,7 @@ func TestInit(t *testing.T) {
 		assert.Equal(false, removed)
 	})
 
-	t.Run("should get an expired key", func(t *testing.T) {
+	t.Run("should fail to get an expired key", func(t *testing.T) {
 		s := store.NewLocalStore()
 
 		err := s.SetKey("hello", "word", time.Now())
@@ -65,5 +65,18 @@ func TestInit(t *testing.T) {
 		v, err := s.GetKey("hello")
 		assert.Equal("", v)
 		assert.EqualError(err, "key not found: hello")
+	})
+
+	t.Run("should remove all keys", func(t *testing.T) {
+		s := store.NewLocalStore()
+
+		err := s.SetKey("hello", "word", time.Now())
+		assert.Nil(nil, err)
+
+		err = s.SetKey("hello", "word", time.Now())
+		assert.Nil(nil, err)
+
+		err = s.Flush()
+		assert.Nil(nil, err)
 	})
 }
