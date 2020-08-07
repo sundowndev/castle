@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/sundowndev/castle"
+	"github.com/sundowndev/castle/store"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -16,7 +16,7 @@ var Write *castle.Scope
 
 // Init application, namespaces and scopes
 func init() {
-	App = castle.NewApp(&castle.LocalStore{Store: &sync.Map{}})
+	App = castle.NewApp(store.NewLocalStore())
 
 	Repositories = App.NewNamespace("repositories")
 

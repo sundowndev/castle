@@ -21,7 +21,9 @@
   </a>
 </div>
 
-Access token management backed by Redis. Designed for large scale systems with several permissions in different contexts (e.g: Gitlab, GitHub...), but also simpler systems (e.g: Nextcloud, HaveIBeenPwned...).
+Access token management backed by Redis. Designed for REST web services that needs rate and time limited access control feature.
+
+Limitations : This library does not fully support the user feature. The only way to make the user able to manage its created tokens is to store them in another database, which is an anti-pattern. We want Redis (or any store used) to be the only source of truth for credentials.
 
 ## Table of content
 
@@ -47,11 +49,12 @@ Access token management backed by Redis. Designed for large scale systems with s
 
 **Principles** :
 
-- Token value is RFC-4112 compliant
-- Token has a name, a single namespace, a rate limit and several scopes
-- Tokens **cannot be permanent, edited or altered**
+- Token value is RFC-4112 compliant and stored as salted hashes
+- Token has a name, a rate limit, an expiration date and several scopes
+- Tokens cannot be edited or altered
 - Tokens cannot be gathered in mass through the API
-- Once created, if the token is lost, **it cannot be found anymore**
+- Once created, if the token's lost, it cannot be found anymore
+- Uses in-memory store as the only source of truth
 - Rate limit cannot be lower than `0`, `-1` being reserved to unlimited rate limit
 
 ## Current status

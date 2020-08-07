@@ -6,23 +6,24 @@ import (
 	"time"
 )
 
+type Rate int
+
 type Token struct {
-	uuid      uuid.UUID  `json:"-"`
-	Name      string     `json:"name"`
-	Namespace *Namespace `json:"namespace"`
-	Scopes    []string   `json:"scopes"`
-	RateLimit int        `json:"rate_limit" default:"-1"`
-	expiresAt time.Time  `json:"expires_at"`
+	uuid      uuid.UUID
+	Name      string   `json:"name"`
+	Scopes    []string `json:"scopes"`
+	RateLimit Rate     `default:"-1"`
+	expiresAt time.Time
 }
 
+
+// String returns the token's value as a string.
+// That value is always a valid UUID.
 func (t *Token) String() string {
 	return t.uuid.String()
 }
 
-func (t *Token) SetRateLimit(rate int) {
-	t.RateLimit = rate
-}
-
+// Serialize serializes the token to a JSON string
 func (t *Token) Serialize() (string, error) {
 	b, err := json.Marshal(t)
 	if err != nil {

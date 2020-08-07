@@ -16,6 +16,9 @@ type Application struct {
 	scopes     map[string]*Scope
 }
 
+const UNLIMITED_RATE_LIMT Rate = -1
+const RATE_LIMIT_KEY_SUFFIX string = ":rate"
+
 // NewApp creates an application object with a key/value storage, scopes and namespaces
 func NewApp(s store.Store) *Application {
 	return &Application{
@@ -44,11 +47,14 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 	}
 
 	t := &Token{
-		uuid:      uuid.New(),
-		Name:      name,
-		Namespace: scopes[0].namespace,
-		Scopes:    scopesAsString,
+		uuid:   uuid.New(),
+		Name:   name,
+		Scopes: scopesAsString,
 	}
+
+	//a.SetRateLimit(func(_ Rate) Rate {
+	//	return UNLIMITED_RATE_LIMT
+	//})
 
 	json, err := t.Serialize()
 	if err != nil {
@@ -84,3 +90,13 @@ func (a *Application) RevokeToken(token string) error {
 
 	return err
 }
+
+// SetRateLimit mutate the Rate limit of the token
+//func (a *Application) SetRateLimit(cb func (Rate) Rate) error {
+//	//t.RateLimit = cb(t.RateLimit)
+//}
+
+// GetRateLimit retrieve the Rate limit of the token
+//func (a *Application) GetRateLimit(token *Token) (Rate,error) {
+//	rate, err = store.GetKey(t.String() + RATE_LIMIT_KEY_SUFFIX)
+//}
