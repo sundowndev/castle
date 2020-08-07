@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Local store is an in-memory KV store for testing
+// LocalStore is an in-memory key-value storage for testing
 type LocalStore = store.LocalStore
 
 // Application defines an entry point for your web application
@@ -17,9 +17,9 @@ type Application struct {
 	scopes     map[string]*Scope
 }
 
-const UnlimitedRateLimit int = -1
-const TokenKeySuffix string = ":token"
-const RateLimitKeySuffix string = ":rate"
+const defaultRateLimit int = -1
+const tokenKeySuffix string = ":token"
+const rateLimitKeySuffix string = ":rate"
 
 // NewApp creates an application object with a key/value storage, scopes and namespaces
 func NewApp(s store.Store) *Application {
@@ -55,7 +55,7 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 	}
 
 	err := a.RateLimitFunc(t, func(_ int) int {
-		return UnlimitedRateLimit
+		return defaultRateLimit
 	})
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 		return nil, err
 	}
 
-	err = a.store.SetKey(t.String()+TokenKeySuffix, json, expiration)
+	err = a.store.SetKey(t.String()+tokenKeySuffix, json, expiration)
 	if err != nil {
 		return nil, err
 	}
@@ -138,9 +138,9 @@ func (a *Application) GetRateLimit(token *Token) (int, error) {
 }
 
 func serializeTokenKey(token string) string {
-	return token + TokenKeySuffix
+	return token + tokenKeySuffix
 }
 
 func serializeRateLimitKey(token string) string {
-	return token + RateLimitKeySuffix
+	return token + rateLimitKeySuffix
 }

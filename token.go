@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Token represents an authentication token
 type Token struct {
 	uuid      uuid.UUID
 	Name      string   `json:"name"`
