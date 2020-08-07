@@ -32,7 +32,7 @@ func TestToken(t *testing.T) {
 		assert.Equal("0785ed1c-b5e9-4a1b-b972-45065d8ad660", token.String())
 		assert.Equal("mytoken", token.Name)
 		assert.Equal([]string{"read"}, token.Scopes)
-		assert.Equal(Rate(0), token.RateLimit)
+		assert.Equal(0, token.RateLimit)
 	})
 
 	t.Run("should check scope on token", func(t *testing.T) {

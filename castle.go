@@ -3,6 +3,7 @@ package castle
 import (
 	"github.com/google/uuid"
 	"github.com/sundowndev/castle/store"
+	"strconv"
 	"time"
 )
 
@@ -16,8 +17,9 @@ type Application struct {
 	scopes     map[string]*Scope
 }
 
-//const UNLIMITED_RATE_LIMT Rate = -1
-//const RATE_LIMIT_KEY_SUFFIX string = ":rate"
+const UnlimitedRateLimit int = -1
+const TokenKeySuffix string = ":token"
+const RateLimitKeySuffix string = ":rate"
 
 // NewApp creates an application object with a key/value storage, scopes and namespaces
 func NewApp(s store.Store) *Application {
@@ -52,16 +54,19 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 		Scopes: scopesAsString,
 	}
 
-	//a.SetRateLimit(func(_ Rate) Rate {
-	//	return UNLIMITED_RATE_LIMT
-	//})
+	err := a.RateLimitFunc(t, func(_ int) int {
+		return UnlimitedRateLimit
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	json, err := t.Serialize()
 	if err != nil {
 		return nil, err
 	}
 
-	err = a.store.SetKey(t.String(), json, expiration)
+	err = a.store.SetKey(t.String()+TokenKeySuffix, json, expiration)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +76,7 @@ func (a *Application) NewToken(name string, expiration time.Time, scopes ...*Sco
 
 // GetToken retrieve a token from its value
 func (a *Application) GetToken(token string) (*Token, error) {
-	json, err := a.store.GetKey(token)
+	json, err := a.store.GetKey(serializeTokenKey(token))
 	if err != nil {
 		return nil, err
 	}
@@ -86,17 +91,56 @@ func (a *Application) GetToken(token string) (*Token, error) {
 
 // RevokeToken permanently delete a token
 func (a *Application) RevokeToken(token string) error {
-	_, err := a.store.RemoveKey(token)
+	_, err := a.store.RemoveKey(serializeTokenKey(token))
 
 	return err
 }
 
-// SetRateLimit mutate the Rate limit of the token
-//func (a *Application) SetRateLimit(cb func (Rate) Rate) error {
-//	//t.RateLimit = cb(t.RateLimit)
-//}
+// RateLimitFunc mutate the rate limit of the token
+func (a *Application) RateLimitFunc(token *Token, f func(int) int) error {
+	var rateString string
+	rateKey := serializeRateLimitKey(token.String())
+
+	rateString, _ = a.store.GetKey(rateKey)
+	if rateString == "" {
+		rateString = "0"
+	}
+
+	rate, err := strconv.Atoi(rateString)
+	if err != nil {
+		return err
+	}
+
+	_, err = a.store.RemoveKey(rateKey)
+	if err != nil {
+		return err
+	}
+
+	var newRate = f(rate)
+
+	if newRate < -1 {
+		newRate = 0
+	}
+
+	return a.store.SetKey(rateKey, strconv.Itoa(newRate), token.expiresAt)
+}
 
 // GetRateLimit retrieve the Rate limit of the token
-//func (a *Application) GetRateLimit(token *Token) (Rate,error) {
-//	rate, err = store.GetKey(t.String() + RATE_LIMIT_KEY_SUFFIX)
-//}
+func (a *Application) GetRateLimit(token *Token) (int, error) {
+	rateString, err := a.store.GetKey(serializeRateLimitKey(token.String()))
+
+	rate, err := strconv.Atoi(rateString)
+	if err != nil {
+		return 0, err
+	}
+
+	return rate, err
+}
+
+func serializeTokenKey(token string) string {
+	return token + TokenKeySuffix
+}
+
+func serializeRateLimitKey(token string) string {
+	return token + RateLimitKeySuffix
+}
