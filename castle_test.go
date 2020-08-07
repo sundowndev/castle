@@ -62,4 +62,46 @@ func TestApp(t *testing.T) {
 		_, err = app.GetToken(token.String())
 		assert.Errorf(err, "key not found: %s", token.String())
 	})
+
+	t.Run("should set rate limit on token", func(t *testing.T) {
+		app := castle.NewApp(store.NewLocalStore())
+
+		ns := app.NewNamespace("repositories")
+
+		read := ns.NewScope("read_repository")
+
+		token, err := app.NewToken("myrepo", time.Now().Add(1*time.Minute), read)
+		assert.Nil(err)
+
+		err = app.RateLimitFunc(token, func(rate int) int {
+			return 100
+		})
+		assert.Nil(err)
+
+		rate, err := app.GetRateLimit(token)
+		assert.Nil(err)
+
+		assert.Equal(100, rate)
+	})
+
+	t.Run("should set rate limit on token but not going lower than 0", func(t *testing.T) {
+		app := castle.NewApp(store.NewLocalStore())
+
+		ns := app.NewNamespace("repositories")
+
+		read := ns.NewScope("read_repository")
+
+		token, err := app.NewToken("myrepo", time.Now().Add(1*time.Minute), read)
+		assert.Nil(err)
+
+		err = app.RateLimitFunc(token, func(rate int) int {
+			return rate - 10
+		})
+		assert.Nil(err)
+
+		rate, err := app.GetRateLimit(token)
+		assert.Nil(err)
+
+		assert.Equal(0, rate)
+	})
 }
