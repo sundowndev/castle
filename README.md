@@ -52,6 +52,7 @@ Access token management backed by Redis. Designed for large scale systems with s
 - Tokens **cannot be permanent, edited or altered**
 - Tokens cannot be gathered in mass through the API
 - Once created, if the token is lost, **it cannot be found anymore**
+- Rate limit cannot be lower than `0`, `-1` being reserved to unlimited rate limit
 
 ## Current status
 
@@ -110,6 +111,7 @@ type Store interface {
 	GetKey(string) (string, error)
 	SetKey(string, string, time.Time) error
 	RemoveKey(string) (bool, error)
+	Flush() error
 }
 ```
 
@@ -175,8 +177,9 @@ func CreateTokenHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // set rate limit 1000
     token.SetRateLimit(func (rate int) int {
-        return 500
+        return 1000
     })
 
     // return token to client...   
@@ -193,11 +196,12 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // set rate limit 999
     token.SetRateLimit(func (rate int) int {
         return rate - 1
     })
 
-    // return token to client...   
+    // read resource...
 }
 ```
 
