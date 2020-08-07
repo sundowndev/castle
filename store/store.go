@@ -14,6 +14,7 @@ type Store interface {
 // NewLocalStore creates a new local store to be used in an application
 func NewLocalStore() *LocalStore {
 	return &LocalStore{
-		Store: &sync.Map{},
+		store: map[string]string{},
+		m: &sync.RWMutex{},
 	}
 }

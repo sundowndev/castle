@@ -7,12 +7,16 @@ import (
 )
 
 type LocalStore struct {
-	Store *sync.Map
+	m     *sync.RWMutex
+	store map[string]string
 }
 
 func (s *LocalStore) GetKey(key string) (string, error) {
-	if v, ok := s.Store.Load(key); ok {
-		return v.(string), nil
+	s.m.RLock()
+	defer s.m.RUnlock()
+
+	if v, ok := s.store[key]; ok {
+		return v, nil
 	}
 
 	return "", fmt.Errorf("key not found: %s", key)
@@ -20,13 +24,15 @@ func (s *LocalStore) GetKey(key string) (string, error) {
 
 func (s *LocalStore) SetKey(key string, value string, expiration time.Time) error {
 	// Ensure key doesn't exists yet
-	if _, ok := s.Store.Load(key); ok {
+	if _, ok := s.store[key]; ok {
 		return fmt.Errorf("key already exist: %s", key)
 	}
 
-	s.Store.Store(key, value)
+	s.store[key] = value
 
-	go s.removeWhenExpired(key, expiration)
+	time.AfterFunc(expiration.Sub(time.Now()), func() {
+		_, _ = s.RemoveKey(key)
+	})
 
 	return nil
 
@@ -35,29 +41,11 @@ func (s *LocalStore) SetKey(key string, value string, expiration time.Time) erro
 func (s *LocalStore) RemoveKey(key string) (bool, error) {
 	var removed bool
 
-	if _, ok := s.Store.Load(key); ok {
+	if _, ok := s.store[key]; ok {
 		removed = true
 	}
 
-	s.Store.Delete(key)
+	delete(s.store, key)
 
 	return removed, nil
-}
-
-func (s *LocalStore) removeWhenExpired(key string, expiration time.Time) error {
-	ticker := time.NewTicker(1 * time.Second)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			if expiration.Before(time.Now()) {
-				_, err := s.RemoveKey(key)
-				if err != nil {
-					return err
-				}
-				return nil
-			}
-		}
-	}
 }
