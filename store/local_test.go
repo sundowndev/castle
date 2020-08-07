@@ -73,10 +73,11 @@ func TestInit(t *testing.T) {
 		err := s.SetKey("hello", "word", time.Now())
 		assert.Nil(nil, err)
 
-		err = s.SetKey("hello", "word", time.Now())
-		assert.Nil(nil, err)
-
 		err = s.Flush()
 		assert.Nil(nil, err)
+
+		v, err := s.GetKey("hello")
+		assert.Equal("", v)
+		assert.EqualError(err, "key not found: hello")
 	})
 }
