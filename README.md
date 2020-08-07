@@ -21,9 +21,9 @@
   </a>
 </div>
 
-Access token management backed by Redis. Designed for REST web services that needs rate and time limited access control feature.
+Access token management library for Go, backed by Redis. Designed for web services that needs a rate and time limited access control feature.
 
-Limitations : This library does not fully support the user feature. The only way to make the user able to manage its created tokens is to store them in another database, which is an anti-pattern. We want Redis (or any store used) to be the only source of truth for credentials.
+**Limitations:** This library does not fully support the user feature. The only way to make the user able to manage its created tokens is to store them in another database, which is an anti-pattern. We want Redis (or any store used) to be the only source of truth for credentials. Feel free to make design proposals.
 
 ## Table of content
 
@@ -44,18 +44,18 @@ Limitations : This library does not fully support the user feature. The only way
 
 - **Application** : An entry point for your web service to register your store, namespaces and scopes.
 - **Namespace** : Refers to a resource of your application.
-- **Scope** : A permission of a namespace that can be granted to tokens.
-- **Store**: A key/value storage system to store serialized tokens.
+- **Scope** : A permission of a namespace that can be granted to tokens (e.g: read, write, delete...).
+- **Store**: A key/value storage system to store serialized tokens (Redis, etcd, RocksDB, MemcacheDB...).
 
 **Principles** :
 
 - Token value is RFC-4112 compliant and stored as salted hashes
 - Token has a name, a rate limit, an expiration date and several scopes
-- Tokens cannot be edited or altered
+- Tokens **cannot be edited or altered**
 - Tokens cannot be gathered in mass through the API
-- Once created, if the token's lost, it cannot be found anymore
+- Once created, if the token's lost, **it cannot be found anymore**
 - Uses in-memory store as the only source of truth
-- Rate limit cannot be lower than `0`, `-1` being reserved to unlimited rate limit
+- Rate limit cannot be lower than `0`. Default value `-1` is reserved to unlimited rate limit
 
 ## Current status
 
