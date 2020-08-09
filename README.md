@@ -49,13 +49,12 @@ Access token management library for Go, backed by Redis. Designed for web servic
 
 **Principles** :
 
-- Token value is RFC-4112 compliant and stored as salted hashes
+- Token value is RFC-4112 compliant
 - Token has a name, a rate limit, an expiration date and several scopes
 - Tokens **cannot be edited or altered**
-- Tokens cannot be gathered in mass through the API
 - Once created, if the token's lost, **it cannot be found anymore**
 - Uses in-memory store as the only source of truth
-- Rate limit cannot be lower than `0`. Default value `-1` is reserved to unlimited rate limit
+- Token's rate limit cannot be lower than `0`. Default value `-1` is reserved to unlimited rate limit
 
 ## Current status
 
@@ -161,8 +160,8 @@ var Write *castle.Scope
 func init() {
   Repositories = App.NewNamespace("repositories")
   
-  Read = Repositories.NewScope("read")
-  Write = Repositories.NewScope("write")
+  Read = Repositories.NewScope("read") // repositories.read
+  Write = Repositories.NewScope("write") // repositories.write
 }
 ```
 
@@ -180,8 +179,8 @@ func CreateTokenHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // set rate limit 1000
-    token.SetRateLimit(func (rate int) int {
+    // set rate limit to 1000
+    App.RateLimitFunc(token, func (rate int) int {
         return 1000
     })
 
@@ -194,13 +193,13 @@ func ReadHandler(w http.ResponseWriter, r *http.Request) {
         // Handle err...        
     }
 
-    if token.GetRateLimit() == 0 {
+    if rate, _ := App.GetRateLimit(token); rate == 0 {
         w.WriteHeader(403)
         return
     }
 
-    // set rate limit 999
-    token.SetRateLimit(func (rate int) int {
+    // set rate limit to 999
+    App.RateLimitFunc(token, func (rate int) int {
         return rate - 1
     })
 
