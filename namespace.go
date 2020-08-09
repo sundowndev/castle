@@ -23,9 +23,11 @@ func (ns *Namespace) NewNamespace(name string) *Namespace {
 // NewScope creates a new scope using the given name
 // This function overrides any duplicated usage
 func (ns *Namespace) NewScope(name string) *Scope {
+	fullName := fmt.Sprintf("%s.%s", ns.name, name)
+
 	ns.app.scopes[name] = &Scope{
 		namespace: ns,
-		name:      name,
+		name:      fullName,
 	}
 
 	return ns.app.scopes[name]
