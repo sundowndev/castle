@@ -11,7 +11,6 @@ type Token struct {
 	uuid      uuid.UUID
 	Name      string   `json:"name"`
 	Scopes    []string `json:"scopes"`
-	RateLimit int      `json:"-" default:"-1"`
 	expiresAt time.Time
 }
 

@@ -12,7 +12,7 @@ type Namespace struct {
 func (ns *Namespace) NewNamespace(name string) *Namespace {
 	fullName := fmt.Sprintf("%s.%s", ns.name, name)
 
-	ns.app.namespaces[name] = &Namespace{
+	ns.app.namespaces[fullName] = &Namespace{
 		name: fullName,
 		app:  ns.app,
 	}

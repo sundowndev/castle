@@ -20,17 +20,17 @@ func TestNamespace(t *testing.T) {
 		assert.Equal(ns, scope.namespace)
 	})
 
-	//t.Run("should create namespace from another namespace", func(t *testing.T) {
-	//	app := NewApp(store.NewLocalStore())
-	//
-	//	ns1 := app.NewNamespace("ns1")
-	//	ns2 := ns1.NewNamespace("ns2")
-	//
-	//	//scope := ns2.NewScope("read")
-	//
-	//	//assert.Equal(app, ns2.app)
-	//	assert.Equal("ns1.ns2", ns2.name)
-	//
-	//	//assert.Equal("ns1.ns2.read", scope.String())
-	//})
+	t.Run("should create namespace from another namespace", func(t *testing.T) {
+		app := NewApp(store.NewLocalStore())
+
+		ns1 := app.NewNamespace("ns1")
+		ns2 := ns1.NewNamespace("ns2")
+
+		//scope := ns2.NewScope("read")
+
+		//assert.Equal(app, ns2.app)
+		assert.Equal("ns1.ns2", ns2.name)
+
+		//assert.Equal("ns1.ns2.read", scope.String())
+	})
 }
