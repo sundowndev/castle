@@ -44,7 +44,9 @@ func main() {
 			return
 		}
 
-		if !token.HasScope(Read) || token.RateLimit == 0 {
+		rateLimit, _ := App.GetRateLimit(token)
+
+		if !token.HasScope(Read) || rateLimit == 0 {
 			w.WriteHeader(403)
 			return
 		}
