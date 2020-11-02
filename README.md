@@ -53,7 +53,7 @@ Access token management library for Go, backed by Redis. Designed for web servic
 - Token has a name, a rate limit, an expiration date and several scopes.
 - Token's value and scopes **cannot be edited or altered**.
 - Once created, if the token's lost, **it cannot be found anymore**.
-- Uses in-memory store as the only source of truth.
+- Uses KV store as the only source of truth.
 - Token's rate limit cannot be lower than `0`. Default value `-1` is reserved to unlimited rate limit.
 
 ## Current status
