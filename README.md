@@ -23,11 +23,9 @@
 
 Access token management library for Go, backed by Redis. Designed for web services that needs a rate and time limited access control feature.
 
-**Limitations:** This library does not fully support the user feature. The only way to make the user able to manage its created tokens is to store them in another database, which is an anti-pattern. We want Redis (or any store used) to be the only source of truth for credentials. Feel free to make design proposals.
-
 ## Table of content
 
-- [Design principles](#design-principles)
+- [Design](#design)
 - [Current status](#current-status)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -38,9 +36,9 @@ Access token management library for Go, backed by Redis. Designed for web servic
 - [Acknowledgement](#acknowledgement)
 - [License](#license)
 
-## Design principles
+## Design
 
-**Definitions :**
+**Definitions** :
 
 - **Application** : An entry point for your web service to register your store, namespaces and scopes.
 - **Namespace** : Refers to a resource of your application.
@@ -55,6 +53,10 @@ Access token management library for Go, backed by Redis. Designed for web servic
 - Once created, if the token's lost, **it cannot be found anymore**.
 - Uses KV store as the only source of truth.
 - Token's rate limit cannot be lower than `0`. Default value `-1` is reserved to unlimited rate limit.
+
+**Limitations** :
+
+- **User feature compatibility** : This library does not fully support the user feature. The only way to make the user able to manage its created tokens is to store them in another database, which is an anti-pattern. We want Redis (or any store used) to be the only source of truth for credentials. Feel free to make design proposals.
 
 ## Current status
 
